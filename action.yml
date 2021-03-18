@@ -1,0 +1,5 @@
+name: 'Releaselog'
+description: 'Keep track of your commit information with releaselog.app'
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
