@@ -1,5 +1,9 @@
 name: 'Releaselog'
-description: 'Keep track of your commit information with releaselog.app'
+description: 'Keep track of your commit information with'
+inputs:
+  api_key:
+    description: 'API key'
+    required: true
 runs:
   using: 'node12'
   main: 'dist/index.js'
