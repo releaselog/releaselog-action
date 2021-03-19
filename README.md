@@ -13,6 +13,10 @@ Create a [GitHub secret](https://help.github.com/en/actions/configuring-and-mana
     api_key: ${{ secrets.releaselog_api_key }}
 ```
 
+## Configuration
+
+This action reads config file located as `.releaselog/config.yml` if it exists. 
+
 ## For developing
 
 Build:
