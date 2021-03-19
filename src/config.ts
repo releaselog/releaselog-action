@@ -14,8 +14,7 @@ export function parseConfig(yamlConfig: string): PathMaps {
 
 function parsePathMaps(config: { [key: string]: string | string[] }) {
   let maps: PathMaps = [];
-  for (const k in Object.keys(config)) {
-    const v: string | string[] = config[k];
+  for (const [k, v] of Object.entries(config)) {
     const apps = typeof v == "string" ? [v] : v;
     maps.push({ regex: new RegExp(k), apps });
   }
