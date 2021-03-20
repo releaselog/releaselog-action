@@ -23,6 +23,7 @@
     "@actions/core": "^1.2.6",
     "@actions/github": "^4.0.0",
     "@types/chai": "^4.2.15",
+    "axios": "^0.21.1",
     "chai": "^4.3.4",
     "yaml": "^1.10.2"
   },

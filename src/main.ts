@@ -2,7 +2,7 @@ import * as core from "@actions/core";
 import * as github from "@actions/github";
 import { existsSync, readFileSync } from "fs";
 import * as path from "path";
-import { execSync } from "child_process";
+import axios from "axios";
 
 import { getApps } from "./apps";
 import { parseConfig, PathMaps } from "./config";
@@ -26,7 +26,7 @@ async function main(): Promise<void> {
       // TODO support multiple commits
       handleCommit(github.context.sha, parseConfig(configText), apiKey);
     }
-    console.log(`Hello world!`);
+    console.log(`success`);
   } catch (error) {
     core.setFailed("failed :/");
   }
@@ -43,6 +43,10 @@ function handleCommit(sha: string, pathMap: PathMaps, apiKey: string) {
     message: commitInfo.message,
     timestamp: commitInfo.timestamp,
   };
+  // TODO support prod/sandbox
+  const url = "https://releaselog-3oaq5vxgca-uc.a.run.app/changes";
+  const auth = { username: apiKey, password: "" };
+  axios.post(url, payload, { auth });
 }
 
 main();
