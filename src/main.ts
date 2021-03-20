@@ -20,22 +20,36 @@ async function main(): Promise<void> {
       process.env.GITHUB_WORKSPACE!,
       ".releaselog/config.yml"
     );
+    let pathMaps: PathMaps | undefined = undefined;
     if (existsSync(configPath)) {
       const configText = readFileSync(configPath, { encoding: "utf8" });
-
-      // TODO support multiple commits
-      handleCommit(github.context.sha, parseConfig(configText), apiKey);
+      pathMaps = parseConfig(configText);
     }
+    // TODO support multiple commits
+    await handleCommit(
+      github.context.sha,
+      pathMaps,
+      apiKey,
+      github.context.repo.repo
+    );
     console.log(`success`);
   } catch (error) {
     core.setFailed("failed :/");
   }
 }
 
-function handleCommit(sha: string, pathMap: PathMaps, apiKey: string) {
+async function handleCommit(
+  sha: string,
+  pathMaps: PathMaps | undefined,
+  apiKey: string,
+  repoName: string
+) {
   const changedFiles = getChangedFiles(sha);
-  const apps = getApps(pathMap, changedFiles);
+  const apps = pathMaps ? getApps(pathMaps, changedFiles) : [repoName];
   const commitInfo = getCommitInfo(sha);
+  if (apps.length === 0) {
+    console.log(`nothing to notify about ${sha} ${commitInfo.message}`);
+  }
   const payload = {
     id: sha,
     apps,
@@ -46,7 +60,10 @@ function handleCommit(sha: string, pathMap: PathMaps, apiKey: string) {
   // TODO support prod/sandbox
   const url = "https://releaselog-3oaq5vxgca-uc.a.run.app/changes";
   const auth = { username: apiKey, password: "" };
-  axios.post(url, payload, { auth });
+  await axios.post(url, payload, { auth });
+  console.log(
+    `successfully updated releaselog app about  ${sha} ${commitInfo.message}`
+  );
 }
 
 main();

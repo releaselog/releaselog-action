@@ -13,12 +13,8 @@ describe("getApps", function () {
       },
     ];
     let apps = getApps(pathMaps, ["auth-server/const.rb", "api/handler.rb"]);
-    expect([...apps]).to.deep.equals(["auth-server", "api"]);
+    expect(apps).to.deep.equals(["auth-server", "api"]);
     apps = getApps(pathMaps, ["auth-server/const.rb", "utils/math.rb"]);
-    expect([...apps]).to.deep.equals([
-      "auth-server",
-      "api",
-      "notification-server",
-    ]);
+    expect(apps).to.deep.equals(["auth-server", "api", "notification-server"]);
   });
 });
