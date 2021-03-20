@@ -6,6 +6,7 @@ import { execSync } from "child_process";
 
 import { getApps } from "./apps";
 import { parseConfig, PathMaps } from "./config";
+import { getChangedFiles, getCommitInfo } from "./git";
 
 async function main(): Promise<void> {
   try {
@@ -23,7 +24,7 @@ async function main(): Promise<void> {
       const configText = readFileSync(configPath, { encoding: "utf8" });
 
       // TODO support multiple commits
-      handleCommit(github.context.sha, parseConfig(configText));
+      handleCommit(github.context.sha, parseConfig(configText), apiKey);
     }
     console.log(`Hello world!`);
   } catch (error) {
@@ -31,13 +32,17 @@ async function main(): Promise<void> {
   }
 }
 
-function handleCommit(sha: string, pathMap: PathMaps) {
-  const stdout = execSync(`git diff-tree --no-commit-id --name-only -r ${sha}`);
-  const changedFiles = stdout.toString().split(/\r\n|\r|\n/);
-
+function handleCommit(sha: string, pathMap: PathMaps, apiKey: string) {
+  const changedFiles = getChangedFiles(sha);
   const apps = getApps(pathMap, changedFiles);
-
-  // TODO notify releaselog API with apps
+  const commitInfo = getCommitInfo(sha);
+  const payload = {
+    id: sha,
+    apps,
+    author: commitInfo.author,
+    message: commitInfo.message,
+    timestamp: commitInfo.timestamp,
+  };
 }
 
 main();
