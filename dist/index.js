@@ -2796,6 +2796,7 @@ function handleCommit(sha, pathMaps, apiKey, repoName) {
         const commitInfo = git_1.getCommitInfo(sha);
         if (apps.length === 0) {
             console.log(`nothing to notify about ${sha} ${commitInfo.message}`);
+            return;
         }
         const payload = {
             id: sha,
